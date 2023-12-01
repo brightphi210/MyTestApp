@@ -4,8 +4,9 @@ import DashHeader from '../Components/DashHeader'
 import { useNavigation } from '@react-navigation/native';
 import React, { useState, useEffect } from 'react';
 
-const Dashboard = () => {
+const Dashboard = ({todo}) => {
 
+  
 
   const [task, setTask] = useState('');
   const [tasks, setTasks] = useState([]);
