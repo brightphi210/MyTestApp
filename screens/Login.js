@@ -1,22 +1,31 @@
-import React from 'react'
-import {SafeAreaView, View, Text, Image, TouchableOpacity, TextInput, ScrollView } from 'react-native'
-import {useFonts} from 'expo-font'
-import AppLoading from 'expo-app-loading';
+import React, {useState, useEffect} from 'react'
+import {SafeAreaView, View, Text, TouchableOpacity, TextInput, ScrollView } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { supabase } from './auth';
 
 
-
-const customFonts ={
-    'Kanits': require('../assets/fonts/Kanit-Bold.ttf'),
-  };
 const Login = ({navigation}) => {
 
-    const [fontsLoaded] = useFonts(customFonts);
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
 
-    // if (!fontsLoaded) {
-    //   return <AppLoading />;
-    // }
-    
+    async function signInWithEmail() {
+        setLoading(true)
+        const { error } = await supabase.auth.signInWithPassword({
+          email: email,
+          password: password,
+        })
+
+
+        if (error) {
+            console.error(error.message);
+          } else {
+            console.log('User logged in:', user);
+            navigation.navigate('dashboard')
+          }
+
+        }
+
     return (
 
     
@@ -25,14 +34,9 @@ const Login = ({navigation}) => {
         <ScrollView>
             <View style={{flex: 1,  paddingHorizontal: 20, marginTop: 80}}>
     
-                <Image 
-                    source={require('../assets/Images/logo.png')}
-                    style={{width: 70, height: 70}}
-                />
-    
                 <View style={{alignItems: 'left'}}>
-                    <Text style={{fontSize: 30, fontFamily: 'Kanit2'}}>Login to Foodiee</Text>
-                    <Text style={{fontSize: 18, fontFamily: 'Kanit2', color: '#A0A0A0'}}>Welcome to Foodiee please login</Text>
+                    <Text style={{fontSize: 30}}>Login to TodoApp</Text>
+                    <Text style={{fontSize: 18, color: '#A0A0A0'}}>Welcome to TodoApp please login</Text>
                 </View>
                 <View style={{paddingVertical: 30,}}>
     
@@ -47,6 +51,9 @@ const Login = ({navigation}) => {
                             marginTop: 10,
                             borderRadius: 10
                         }}
+
+                        onChangeText={(text) => setEmail(text)}
+                        value={email}
                     />
     
                     <View style ={{position: 'relative'}}>
@@ -60,7 +67,9 @@ const Login = ({navigation}) => {
                                 marginTop: 10,
                                 borderRadius: 10
                             }}
-                            
+
+                            onChangeText={(text) => setPassword(text)}
+                            value={password}
                         />
     
                         <TouchableOpacity style={{ position: 'absolute', right: 30, top: 27, fontSize: 15 }}>
@@ -69,8 +78,6 @@ const Login = ({navigation}) => {
                     </View>
     
                 </View>
-    
-                <Text style={{fontFamily: 'Kanit2', color: '#FA4A0C'}}>Forgot passcode?</Text>
                 <TouchableOpacity style={{
                     backgroundColor: '#EC2623', 
                     alignSelf: 'center', marginBottom: 10, 
@@ -87,11 +94,6 @@ const Login = ({navigation}) => {
                     }} 
                     onPress={()=>navigation.navigate('dashboard')} >Login</Text>
                 </TouchableOpacity>
-                <Text style={{
-                    fontFamily: 'Kanit2', 
-                    color: '#999999', 
-                    textAlign: 'center'
-                }}>Don't have an account ? <Text style={{color: '#FA4A0C'}} onPress={()=>navigation.navigate('SignUp')}>Register</Text></Text>
             </View>
         </ScrollView>
         </SafeAreaView>

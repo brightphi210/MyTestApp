@@ -1,45 +1,83 @@
-import React from 'react'
-import {SafeAreaView, View, Text, Image, TouchableOpacity, TextInput, ScrollView } from 'react-native'
+
+import {SafeAreaView, View, Text, TouchableOpacity, TextInput, FlatList, Button } from 'react-native'
 import DashHeader from '../Components/DashHeader'
-import {useFonts} from 'expo-font'
-import Icon from 'react-native-vector-icons/FontAwesome';
-
-
-const customFonts ={
-    'Kanit': require('../assets/fonts/Kanit-Bold.ttf'),
-    'Kanit2': require('../assets/fonts/Kanit-Regular.ttf'),
-    'pacific': require('../assets/fonts/Pacifico-Regular.ttf')
-  };
-
+import { useNavigation } from '@react-navigation/native';
+import React, { useState, useEffect } from 'react';
 
 const Dashboard = () => {
 
-    const [fontsLoaded] = useFonts(customFonts);
-  return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: 'white',}}>
-      <View style={{backgroundColor: 'white'}}>
-        <DashHeader title={'Dashboard'} />
-        <View style={{paddingHorizontal: 30, paddingTop: 10}}>
-            <Text style={{fontSize: 30, }}>Delicious </Text>
-            <Text style={{fontSize: 30, }}>food for you</Text>
 
-            <View style={{position: 'relative'}}>
-                <Icon name='search' style={{position: 'absolute', bottom: 10, left: 0, zIndex: 2, fontSize: 15}}/>
-                <TextInput
-                    placeholder='Search'
-                    style={{
-                        width: '100%',
-                        borderColor: '#D6D6D6',
-                        borderWidth: 1,
-                        paddingVertical: 5,
-                        paddingHorizontal: 20,
-                        marginTop: 10,
-                        borderRadius: 10,
-                        backgroundColor: '#F4F4F4'
-                    }}
-                />
+  const [task, setTask] = useState('');
+  const [tasks, setTasks] = useState([]);
+
+
+  const [updatingTodo, setUpdatingTodo] = useState(null);
+  const [updateText, setUpdateText] = useState('');
+
+  const addTask = () => {
+    if (task.trim() !== '') {
+      setTasks([...tasks, { id: tasks.length.toString(), text: task }]);
+      setTask('');
+    }
+  };
+
+  const removeTask = (taskId) => {
+    setTasks(tasks.filter((t) => t.id !== taskId));
+  };
+
+
+  const navigation = useNavigation();
+
+  const handleTodoPress = (taskId) => {
+    navigation.navigate('description', { taskId });
+  };
+
+
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: 'white', height: '100%'}}>
+      <View style={{backgroundColor: 'white', flex: 1, height: '100%'}}>
+        <DashHeader title={'Dashboard'} />
+        <View style={{paddingHorizontal: 20, paddingTop: 10}}>
+        <View>
+
+        <TextInput
+            placeholder='Enter New Todo'
+            style={{
+                width: '100%',
+                borderColor: '#D6D6D6',
+                borderWidth: 1,
+                padding: 10,
+                marginTop: 10,
+                marginBottom: 20,
+                borderRadius: 10
+            }}
+
+            value={task}
+            onChangeText={(text) => setTask(text)}
+        />
+
+
+        <Button title="Add" onPress={addTask}  />
+        <FlatList
+          data={tasks}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10, marginTop: 20, }}>
+              <Text>{item.text}</Text>
+              <Button title="Remove" onPress={() => removeTask(item.id)} />
+              <Button title="View Details" onPress={() => handleTodoPress(1)} />
+
+              <TouchableOpacity onPress={() => handleTodoPress(1)}>
+              <Text>Todo 1</Text>
+            </TouchableOpacity>
+
+            
             </View>
+          )}
+        />
+      </View>
         </View>
+
     </View>
     </SafeAreaView>
 
